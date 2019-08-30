@@ -1,0 +1,9 @@
+Care was taken to make as few assumptions as possible in the coding of this exercise
+But some still exist.
+
+The store items catalogue was hard coded. Normally this would be a dynamic lookup
+This code was written to allow for 2 types of offers to be specified
+(1) Where there is a discount (integer) on a product which is applied irrespective of number of items bought
+(2) The conditional BOGOF offer version which is represented by a string containing 2 numbers e.g '1 1' means
+    buy one get one free
+    '2 1' represents buy two and get one free
