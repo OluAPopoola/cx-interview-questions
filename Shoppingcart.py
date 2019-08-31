@@ -16,8 +16,10 @@ store_catalogue = [{'item_name': 'Baked Beans', 'item_price': 0.99, 'itemdiscoun
 
 def add_item_to_cart(thecart: list, name: str, price: float, qty: int) -> list:
     """This function adds the item to the cart"""
+    if qty < 1:
+        raise Exception("Quantity must be greater than 0")
     item = {'item_name': name, 'item_price': price, 'item_qty': qty}
-    print(item)
+    print('Adding: ', item)
     thecart.append(item)
     return thecart
 
@@ -26,7 +28,6 @@ def get_cart_subtotal(thecart: list) -> float:
     """This function return the raw value of the items in the cart.
     It loops through the contents of the cart and multiplies the price by the quantity"""
     carttotal = 0.00
-
     for item in thecart:
         carttotal += item['item_qty'] * item['item_price']
 
@@ -61,7 +62,7 @@ def get_cart_discount(thecart: list) -> float:
             if item['item_qty'] > (b + f):
                 # offer applies. we now need to calculate the discount to apply
                 st = int(item['item_qty'] / (b + f))
-                totaldiscount += (item['item_price'] * st)
+                totaldiscount += (item['item_price'] * st * f)
 
     return round(totaldiscount, 2)
 
@@ -69,6 +70,7 @@ def get_cart_discount(thecart: list) -> float:
 def delete_from_cart(thecart: list, item_name: str) -> list:
 
     """this function deletes the item from the cart"""
+    print('Removing: {} from cart'.format(item_name))
     if len(cart) > 0:
         # something is in the cart
         for item in thecart:
@@ -82,6 +84,9 @@ def delete_from_cart(thecart: list, item_name: str) -> list:
 def update_cart(thecart: list, uitem: str, newqty: int) -> list:
     """This function updates the cart item of the given item
         it replaces the current quantity with the new one passed in"""
+    print('Updating: {} quantity in cart to {}'.format(uitem, newqty))
+    if newqty < 1:
+        raise Exception("Quantity must be greater than 0")
     for item in thecart:
         if item['item_name'] == uitem:
             # the item is in the cart
@@ -110,18 +115,24 @@ def print_cart_contents(thecart: list):
         print("{}  {:.2f}  {}".format(item['item_name'], item['item_price'], item['item_qty']))
 
 
-# -------------Preliminary testing - will need proper pytests-----------------------------------------------------------------------------------
-cart = add_item_to_cart(cart, 'Baked Beans', 0.99, 10)
-print_cart_contents(cart)
+def print_cart_summary(thecart):
+    print_cart_contents(thecart)
+    cart_subtotal = get_cart_subtotal(thecart)
+    cart_discount = get_cart_discount(thecart)
+    print('SubTotal: £{:.2f}'.format(cart_subtotal))
+    print('Discount: £{:.2f}'.format(cart_discount))
+    print('Amount Due: £{:.2f}'.format(cart_subtotal - cart_discount))
+
+
+# -------------Preliminary testing - will need proper pytests-------------------------------
+cart = add_item_to_cart(cart, 'Baked Beans', 0.99, 0)
+print_cart_summary(cart)
 cart = add_item_to_cart(cart, 'Sardines', 1.89, 5)
-print_cart_contents(cart)
+print_cart_summary(cart)
 cart = add_item_to_cart(cart, 'Biscuits', 1.20, 5)
-print_cart_contents(cart)
-print(get_cart_subtotal(cart))
+print_cart_summary(cart)
 cart = delete_from_cart(cart, "Biscuits")
-print_cart_contents(cart)
-print(get_cart_subtotal(cart))
-print(get_cart_discount(cart))
-update_cart(cart, 'Sardines', 20)
-print_cart_contents(cart)
-print('Cart Subtotal: {:.2f}'.format(get_cart_subtotal(cart)))
+print_cart_summary(cart)
+cart = update_cart(cart, 'Sardines', 20)
+print_cart_summary(cart)
+
